@@ -14,6 +14,7 @@ export default function TransferPanel({ onComplete }) {
   const [msg, setMsg] = useState(null);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
 
+  // Step 1: Validate fields and open password popup
   const handleInitialSubmit = (e) => {
     e.preventDefault();
     setMsg(null);
@@ -23,22 +24,28 @@ export default function TransferPanel({ onComplete }) {
       return;
     }
 
-    // open password popup
+    if (Number(form.amount) <= 0) {
+      setMsg({ type: "error", text: "Amount must be greater than 0." });
+      return;
+    }
+
     setShowPasswordPopup(true);
   };
 
+  // Step 2: Confirm password and process transfer
   const handleTransfer = async () => {
     setLoading(true);
     setMsg(null);
 
     try {
-      await API.post("/transfer/transfer", {
+      const res = await API.post("/transfer/transfer", {
         senderAccount: form.senderAccount,
         receiverAccount: form.receiverAccount,
         amount: Number(form.amount),
         password: password,
       });
 
+      // ✅ Success
       setMsg({ type: "success", text: "Transfer completed successfully!" });
       setForm({ senderAccount: "", receiverAccount: "", amount: "" });
       setPassword("");
@@ -46,13 +53,16 @@ export default function TransferPanel({ onComplete }) {
       onComplete?.();
     } catch (err) {
       console.error(err);
-      if (err?.response?.status === 401 || err?.response?.status === 403) {
+
+      const errorMsg = err?.response?.data || err?.data || "Transfer failed";
+
+      if (errorMsg.toLowerCase().includes("password")) {
+        // ❌ Wrong password → keep popup open
         setMsg({ type: "error", text: "Incorrect password. Please try again." });
       } else {
-        setMsg({
-          type: "error",
-          text: err?.response?.data || err?.data || "Transfer failed",
-        });
+        // ❌ Other errors → close popup and show error in main form
+        setMsg({ type: "error", text: errorMsg });
+        setShowPasswordPopup(false);
       }
     } finally {
       setLoading(false);
@@ -72,6 +82,7 @@ export default function TransferPanel({ onComplete }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Background icons */}
       <img
         src="https://cdn-icons-png.flaticon.com/512/2920/2920322.png"
         alt="Transfer Icon"
@@ -97,6 +108,7 @@ export default function TransferPanel({ onComplete }) {
         }}
       />
 
+      {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-3" style={{ zIndex: 1 }}>
         <div>
           <h5 className="fw-bold text-danger">Transfer Funds</h5>
@@ -112,7 +124,7 @@ export default function TransferPanel({ onComplete }) {
         </motion.button>
       </div>
 
-      {/* Transfer form */}
+      {/* Main Transfer Form */}
       <form onSubmit={handleInitialSubmit} className="row g-3 position-relative" style={{ zIndex: 2 }}>
         {[
           { label: "Sender Account", key: "senderAccount", type: "text", placeholder: "Enter sender account no." },
@@ -152,7 +164,11 @@ export default function TransferPanel({ onComplete }) {
         </div>
 
         {msg && (
-          <div className={`alert mt-3 ${msg.type === "error" ? "alert-danger" : "alert-success"} fw-semibold`}>
+          <div
+            className={`alert mt-3 ${
+              msg.type === "error" ? "alert-danger" : "alert-success"
+            } fw-semibold`}
+          >
             {msg.text}
           </div>
         )}
