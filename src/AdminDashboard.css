@@ -11,7 +11,7 @@
   --motion-fadeup: fadeUp 0.6s var(--motion-ease) both;
 }
 
-/* ✨ Animations mimicking Framer Motion */
+/* ✨ Animations */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -22,28 +22,16 @@
     transform: translateY(0);
   }
 }
-
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-
 @keyframes scaleIn {
-  from {
-    transform: scale(0.98);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.98); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-/* Root structure */
+/* Root */
 .admin-root {
   min-height: 100vh;
   display: flex;
@@ -65,7 +53,6 @@
   backdrop-filter: blur(6px);
   animation: var(--motion-fadeup);
 }
-
 .brand-title {
   font-weight: 800;
   font-size: 18px;
@@ -73,11 +60,9 @@
   letter-spacing: 0.5px;
   transition: transform 0.2s var(--motion-ease);
 }
-
 .brand-title:hover {
   transform: scale(1.05);
 }
-
 .brand-sub {
   color: var(--muted);
   font-size: 12px;
@@ -114,7 +99,6 @@
   animation: scaleIn 0.5s var(--motion-ease);
   transition: transform 0.25s var(--motion-ease), box-shadow 0.25s var(--motion-ease);
 }
-
 .admin-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -151,12 +135,10 @@
   transition: all 0.25s var(--motion-ease);
   animation: fadeUp 0.4s var(--motion-ease) both;
 }
-
 .nav-btn:hover {
   transform: translateX(6px);
   background: rgba(243, 66, 66, 0.1);
 }
-
 .nav-btn.active {
   background: linear-gradient(90deg, rgba(243, 66, 66, 0.15), rgba(243, 66, 66, 0.05));
   color: var(--accent);
@@ -174,12 +156,10 @@
   font-weight: 700;
   transition: all 0.25s var(--motion-ease);
 }
-
 .btn-primary-lg:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
 }
-
 .btn-ghost {
   background: transparent;
   border: 1px solid rgba(243, 66, 66, 0.2);
@@ -189,12 +169,11 @@
   cursor: pointer;
   transition: all 0.2s var(--motion-ease);
 }
-
 .btn-ghost:hover {
   background: rgba(243, 66, 66, 0.1);
 }
 
-/* Content Layout */
+/* Content */
 .content {
   flex: 1;
   display: flex;
@@ -202,7 +181,6 @@
   gap: 14px;
   animation: var(--motion-fadeup);
 }
-
 .data-card {
   padding: 14px;
   border-radius: 10px;
@@ -219,7 +197,6 @@
   padding: 8px;
   animation: fadeUp 0.6s var(--motion-ease) both;
 }
-
 table.admin-table {
   width: 100%;
   border-collapse: separate;
@@ -227,29 +204,24 @@ table.admin-table {
   color: #374151;
   font-size: 13px;
 }
-
 table.admin-table thead th {
   background: rgba(243, 66, 66, 0.05);
   color: #374151;
   padding: 12px;
   text-align: left;
-  border-radius: 2px;
   position: sticky;
   top: 0;
 }
-
 table.admin-table tbody tr {
   background: #ffecec;
   border-radius: 8px;
   transition: all 0.25s var(--motion-ease);
   animation: fadeUp 0.6s var(--motion-ease) both;
 }
-
 table.admin-table tbody tr:hover {
   background: #ffdada;
   transform: scale(1.01);
 }
-
 table.admin-table tbody td {
   padding: 12px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
@@ -267,7 +239,6 @@ table.admin-table tbody td {
   gap: 6px;
   box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
 }
-
 .badge-safe {
   background: linear-gradient(90deg, #21d727, #a1e6a6);
   color: #fdfdfd;
@@ -287,13 +258,11 @@ table.admin-table tbody td {
   margin-top: 12px;
   animation: fadeIn 0.5s ease;
 }
-
 .pagination-controls {
   display: flex;
   gap: 8px;
   align-items: center;
 }
-
 .btn-pager {
   background: transparent;
   border: 1px solid rgba(243, 66, 66, 0.2);
@@ -303,7 +272,6 @@ table.admin-table tbody td {
   cursor: pointer;
   transition: all 0.2s var(--motion-ease);
 }
-
 .btn-pager:hover {
   background: rgba(243, 66, 66, 0.1);
   transform: scale(1.05);
@@ -315,13 +283,11 @@ table.admin-table tbody td {
   border-radius: 8px;
   animation: fadeUp 0.6s var(--motion-ease) both;
 }
-
 .alert-success {
   background: rgba(243, 66, 66, 0.08);
   color: #7f1d1d;
   border: 1px solid rgba(243, 66, 66, 0.15);
 }
-
 .alert-danger {
   background: rgba(239, 68, 68, 0.08);
   color: #7f1d1d;
@@ -337,17 +303,14 @@ table.admin-table tbody td {
   padding: 8px 10px;
   transition: all 0.2s var(--motion-ease);
 }
-
 .form-control:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(243, 66, 66, 0.1);
 }
-
 .form-control::placeholder {
   color: rgba(107, 114, 128, 0.4);
 }
-
 .btn-classic {
   background: linear-gradient(90deg, #f87171, #e11d48);
   color: #ffffff;
@@ -356,36 +319,67 @@ table.admin-table tbody td {
   border-radius: 8px;
   transition: transform 0.25s var(--motion-ease);
 }
-
 .btn-classic:hover {
   transform: scale(1.05);
 }
 
-/* Responsive */
+/* 🌐 Enhanced Responsive Design */
 @media (max-width: 980px) {
   .admin-body {
     flex-direction: column;
+    padding: 12px;
   }
   .admin-sidebar {
     width: 100%;
+    padding: 14px;
+    order: 2;
+  }
+  .content {
+    order: 1;
+  }
+  table.admin-table {
+    font-size: 12px;
   }
 }
-@keyframes float {
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(2deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
+
+@media (max-width: 600px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+  .brand-title {
+    font-size: 16px;
+  }
+  .admin-sidebar {
+    border-radius: 10px;
+  }
+  .nav-btn {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+  .btn-primary-lg {
+    width: 100%;
+    padding: 10px;
+  }
 }
 
-@keyframes floatParticle {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
+@media (max-width: 420px) {
+  .admin-body {
+    gap: 12px;
+  }
+  .admin-card {
+    padding: 12px;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+  table.admin-table th, table.admin-table td {
+    padding: 8px 6px;
+  }
+  .btn-pager {
+    padding: 4px 8px;
+  }
 }
-
-@keyframes fadeUp {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
- 
-
