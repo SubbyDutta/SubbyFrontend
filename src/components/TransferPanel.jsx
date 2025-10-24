@@ -1,37 +1,48 @@
+// src/pages/TransferPanel.jsx
 import React, { useState } from "react";
 import API from "../api";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TransferPanel({ onComplete }) {
   const [form, setForm] = useState({
     senderAccount: "",
     receiverAccount: "",
     amount: "",
-    password: "",
   });
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
 
-  const submit = async (e) => {
+  const handleInitialSubmit = (e) => {
     e.preventDefault();
     setMsg(null);
 
-    if (!form.senderAccount || !form.receiverAccount || !form.amount || !form.password) {
+    if (!form.senderAccount || !form.receiverAccount || !form.amount) {
       setMsg({ type: "error", text: "Please fill all fields." });
       return;
     }
 
+    // open password popup
+    setShowPasswordPopup(true);
+  };
+
+  const handleTransfer = async () => {
     setLoading(true);
+    setMsg(null);
+
     try {
       await API.post("/transfer/transfer", {
         senderAccount: form.senderAccount,
         receiverAccount: form.receiverAccount,
         amount: Number(form.amount),
-        password: form.password,
+        password: password,
       });
 
       setMsg({ type: "success", text: "Transfer completed successfully!" });
-      setForm({ senderAccount: "", receiverAccount: "", amount: "", password: "" });
+      setForm({ senderAccount: "", receiverAccount: "", amount: "" });
+      setPassword("");
+      setShowPasswordPopup(false);
       onComplete?.();
     } catch (err) {
       console.error(err);
@@ -93,7 +104,7 @@ export default function TransferPanel({ onComplete }) {
         </div>
         <motion.button
           className="btn btn-outline-danger btn-sm"
-          onClick={() => setForm({ senderAccount: "", receiverAccount: "", amount: "", password: "" })}
+          onClick={() => setForm({ senderAccount: "", receiverAccount: "", amount: "" })}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -101,12 +112,12 @@ export default function TransferPanel({ onComplete }) {
         </motion.button>
       </div>
 
-      <form onSubmit={submit} className="row g-3 position-relative" style={{ zIndex: 2 }}>
+      {/* Transfer form */}
+      <form onSubmit={handleInitialSubmit} className="row g-3 position-relative" style={{ zIndex: 2 }}>
         {[
           { label: "Sender Account", key: "senderAccount", type: "text", placeholder: "Enter sender account no." },
           { label: "Receiver Account", key: "receiverAccount", type: "text", placeholder: "Enter receiver account no." },
           { label: "Amount (₹)", key: "amount", type: "number", placeholder: "Enter amount" },
-          { label: "Account Password", key: "password", type: "password", placeholder: "Enter password" },
         ].map((field, idx) => (
           <div className="col-md-6" key={idx}>
             <label className="form-label fw-semibold">{field.label}</label>
@@ -124,16 +135,15 @@ export default function TransferPanel({ onComplete }) {
           <motion.button
             type="submit"
             className="primary px-4"
-            disabled={loading}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.95 }}
           >
-            {loading ? "Processing..." : "Send Money"}
+            Continue
           </motion.button>
           <motion.button
             type="button"
             className="ghost"
-            onClick={() => setForm({ senderAccount: "", receiverAccount: "", amount: "", password: "" })}
+            onClick={() => setForm({ senderAccount: "", receiverAccount: "", amount: "" })}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -153,6 +163,66 @@ export default function TransferPanel({ onComplete }) {
           100% Secure — End-to-End Encrypted Transfers
         </p>
       </div>
+
+      {/* Password Popup */}
+      <AnimatePresence>
+        {showPasswordPopup && (
+          <motion.div
+            className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+            style={{
+              background: "rgba(0,0,0,0.6)",
+              zIndex: 2000,
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white shadow-lg p-4 rounded-4 text-center"
+              style={{
+                width: 400,
+                backdropFilter: "blur(8px)",
+              }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+            >
+              <h5 className="fw-bold mb-3 text-danger">Enter Account Password</h5>
+              <input
+                type="password"
+                className="form-control border-danger text-center fw-semibold"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
+              <div className="d-flex justify-content-center gap-3 mt-4">
+                <motion.button
+                  className="btn btn-danger px-4"
+                  onClick={handleTransfer}
+                  disabled={loading || !password}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {loading ? "Processing..." : "Confirm"}
+                </motion.button>
+                <motion.button
+                  className="btn btn-outline-secondary px-4"
+                  onClick={() => {
+                    setPassword("");
+                    setShowPasswordPopup(false);
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  disabled={loading}
+                >
+                  Cancel
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
