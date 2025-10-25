@@ -5,7 +5,9 @@ const Signup = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -14,7 +16,7 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Signup Successful 🚀");
+    alert("Signup Successful ❤️‍🔥");
   };
 
   return (
@@ -28,17 +30,17 @@ const Signup = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "radial-gradient(circle at top left, #111827, #0f172a, #020617)",
+        background: "radial-gradient(circle at top, #1a0000 0%, #330000 40%, #660000 80%, #ff1a1a 120%)",
         overflow: "hidden",
         position: "relative",
         color: "#fff",
         fontFamily: "'Poppins', sans-serif",
       }}
     >
-      {/* Animated glowing background orbs */}
+      {/* Glowing red background orbs */}
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 0.15 }}
+        animate={{ scale: 1, opacity: 0.25 }}
         transition={{ duration: 2, ease: "easeOut" }}
         style={{
           position: "absolute",
@@ -47,13 +49,13 @@ const Signup = () => {
           width: "400px",
           height: "400px",
           borderRadius: "50%",
-          background: "radial-gradient(circle, #4f46e5 0%, transparent 70%)",
+          background: "radial-gradient(circle, #ff4d4d 0%, transparent 70%)",
           filter: "blur(80px)",
         }}
       />
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 0.15 }}
+        animate={{ scale: 1, opacity: 0.25 }}
         transition={{ duration: 2.5, ease: "easeOut" }}
         style={{
           position: "absolute",
@@ -62,25 +64,26 @@ const Signup = () => {
           width: "400px",
           height: "400px",
           borderRadius: "50%",
-          background: "radial-gradient(circle, #ec4899 0%, transparent 70%)",
-          filter: "blur(80px)",
+          background: "radial-gradient(circle, #ff1a1a 0%, transparent 70%)",
+          filter: "blur(90px)",
         }}
       />
 
-      {/* Signup card */}
+      {/* Card */}
       <motion.div
-        initial={{ y: 60, opacity: 0 }}
+        initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         style={{
-          width: "380px",
+          width: "400px",
           padding: "40px 30px",
           borderRadius: "20px",
           background: "rgba(255, 255, 255, 0.05)",
           backdropFilter: "blur(12px)",
-          boxShadow: "0 0 30px rgba(255, 255, 255, 0.05)",
+          boxShadow: "0 0 25px rgba(255, 50, 50, 0.3)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
           zIndex: 1,
+          textAlign: "center",
         }}
       >
         <motion.h2
@@ -88,19 +91,20 @@ const Signup = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6 }}
           style={{
-            textAlign: "center",
             marginBottom: "25px",
             fontSize: "1.8rem",
             fontWeight: 600,
-            color: "#e5e7eb",
+            color: "#ffe6e6",
+            letterSpacing: "0.5px",
           }}
         >
           Create Account
         </motion.h2>
 
         <form onSubmit={handleSubmit}>
+          {/* All your original input fields */}
           <motion.input
-            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #6366f1" }}
+            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #ff4d4d" }}
             transition={{ duration: 0.2 }}
             type="text"
             name="name"
@@ -111,7 +115,7 @@ const Signup = () => {
             style={inputStyle}
           />
           <motion.input
-            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #8b5cf6" }}
+            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #ff4d4d" }}
             transition={{ duration: 0.2 }}
             type="email"
             name="email"
@@ -122,7 +126,18 @@ const Signup = () => {
             style={inputStyle}
           />
           <motion.input
-            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #ec4899" }}
+            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #ff4d4d" }}
+            transition={{ duration: 0.2 }}
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            value={form.phone}
+            onChange={handleChange}
+            required
+            style={inputStyle}
+          />
+          <motion.input
+            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #ff4d4d" }}
             transition={{ duration: 0.2 }}
             type="password"
             name="password"
@@ -132,15 +147,26 @@ const Signup = () => {
             required
             style={inputStyle}
           />
+          <motion.input
+            whileFocus={{ scale: 1.02, boxShadow: "0 0 12px #ff4d4d" }}
+            transition={{ duration: 0.2 }}
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            required
+            style={inputStyle}
+          />
 
           <motion.button
             whileHover={{
               scale: 1.05,
               background:
-                "linear-gradient(135deg, #6366f1 0%, #ec4899 100%)",
-              boxShadow: "0 0 20px rgba(236, 72, 153, 0.5)",
+                "linear-gradient(135deg, #ff4d4d 0%, #ff1a1a 50%, #ffffff 100%)",
+              boxShadow: "0 0 20px rgba(255, 50, 50, 0.6)",
             }}
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.96 }}
             transition={{ duration: 0.3 }}
             type="submit"
             style={{
@@ -149,7 +175,7 @@ const Signup = () => {
               borderRadius: "12px",
               border: "none",
               background:
-                "linear-gradient(135deg, #4f46e5 0%, #8b5cf6 50%, #ec4899 100%)",
+                "linear-gradient(135deg, #b30000 0%, #ff1a1a 80%, #ff8080 100%)",
               color: "white",
               fontSize: "1rem",
               fontWeight: 600,
@@ -165,15 +191,15 @@ const Signup = () => {
   );
 };
 
-// 🔹 Common input styles
+// 🔹 Common input styles (dark red glass look)
 const inputStyle = {
   width: "100%",
   padding: "12px 14px",
   margin: "10px 0",
   borderRadius: "10px",
-  border: "1px solid rgba(255,255,255,0.15)",
-  background: "rgba(255,255,255,0.05)",
-  color: "#f3f4f6",
+  border: "1px solid rgba(255, 255, 255, 0.15)",
+  background: "rgba(255, 255, 255, 0.05)",
+  color: "#ffe6e6",
   fontSize: "0.95rem",
   outline: "none",
 };
