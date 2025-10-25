@@ -11,7 +11,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Add background animation CSS dynamically
+    // Background animation
     const style = document.createElement("style");
     style.innerHTML = `
       @keyframes bgMove {
@@ -23,6 +23,14 @@ export default function Login() {
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
   }, []);
+
+  // Auto-close popup after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -166,7 +174,7 @@ export default function Login() {
         </div>
       </motion.div>
 
-      {/* ✅ Animated Popup Message */}
+      {/* ✅ Animated Popup Message with Close Button */}
       <AnimatePresence>
         {message && (
           <motion.div
@@ -196,6 +204,7 @@ export default function Login() {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
               style={{
+                position: "relative",
                 background: "#fff",
                 borderRadius: "18px",
                 border: "2px solid #ffb3b3",
@@ -205,6 +214,22 @@ export default function Login() {
                 color: message.type === "error" ? "#cc0000" : "#006400",
               }}
             >
+              {/* Close button */}
+              <button
+                onClick={() => setMessage(null)}
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  border: "none",
+                  background: "transparent",
+                  fontSize: "18px",
+                  cursor: "pointer",
+                }}
+              >
+                ✖
+              </button>
+
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1.2 }}
@@ -213,8 +238,7 @@ export default function Login() {
                   width: "65px",
                   height: "65px",
                   borderRadius: "50%",
-                  background:
-                    message.type === "error" ? "#ffcccc" : "#ccffcc",
+                  background: message.type === "error" ? "#ffcccc" : "#ccffcc",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
