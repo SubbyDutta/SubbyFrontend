@@ -16,7 +16,7 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Signup Successful ❤️");
+    alert("Signup Successful ✅");
   };
 
   return (
