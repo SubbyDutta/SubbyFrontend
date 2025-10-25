@@ -58,21 +58,22 @@ const Signup = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #b30000, #ff6666, #ffffff)",
-        backgroundSize: "300% 300%",
-        animation: "bgMove 12s ease infinite",
+        background:
+          "linear-gradient(135deg, #b30000 0%, #cc0000 35%, #ff6666 80%, #ffffff 100%)",
+        backgroundSize: "200% 200%",
+        animation: "bgMove 10s ease infinite",
       }}
     >
       <motion.div
         className="signup-card"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         style={{
           width: "420px",
           padding: "35px 30px",
-          borderRadius: "20px",
-          boxShadow: "0 10px 40px rgba(179, 0, 0, 0.3)",
+          borderRadius: "18px",
+          boxShadow: "0 12px 35px rgba(179, 0, 0, 0.3)",
           background: "rgba(255, 255, 255, 0.97)",
           backdropFilter: "blur(8px)",
           position: "relative",
@@ -80,7 +81,7 @@ const Signup = () => {
         }}
       >
         {/* Header */}
-        <motion.h2
+        <motion.h4
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -88,15 +89,15 @@ const Signup = () => {
             textAlign: "center",
             color: "#b30000",
             marginBottom: "5px",
-            fontWeight: "700",
+            fontWeight: 700,
           }}
         >
-           Create Your Account
-        </motion.h2>
+          register 
+        </motion.h4>
         <p
           style={{
             textAlign: "center",
-            color: "#666",
+            color: "#555",
             marginBottom: "20px",
             fontSize: "14px",
           }}
@@ -104,102 +105,53 @@ const Signup = () => {
           Join our secure banking platform today
         </p>
 
-        {/* Error Message */}
+        {/* Error */}
         {error && (
           <motion.div
-            className="error-message"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             style={{
               color: "#cc0000",
               textAlign: "center",
               marginBottom: 12,
               fontWeight: 600,
             }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
           >
             {error}
           </motion.div>
         )}
 
-        {/* Signup Form */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-            className="input"
-            placeholder="Username"
-            value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
-            required
-            style={{
-              border: "1.5px solid #ff9999",
-              padding: "10px 14px",
-              borderRadius: "8px",
-              outline: "none",
-            }}
-          />
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-            className="input"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            required
-            style={{
-              border: "1.5px solid #ff9999",
-              padding: "10px 14px",
-              borderRadius: "8px",
-            }}
-          />
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-            className="input"
-            type="tel"
-            placeholder="Mobile Number"
-            value={form.mobile}
-            onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-            required
-            style={{
-              border: "1.5px solid #ff9999",
-              padding: "10px 14px",
-              borderRadius: "8px",
-            }}
-          />
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-            className="input"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required
-            style={{
-              border: "1.5px solid #ff9999",
-              padding: "10px 14px",
-              borderRadius: "8px",
-            }}
-          />
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-            className="input"
-            type="password"
-            placeholder="Confirm Password"
-            value={form.confirmPassword}
-            onChange={(e) =>
-              setForm({ ...form, confirmPassword: e.target.value })
-            }
-            required
-            style={{
-              border: "1.5px solid #ff9999",
-              padding: "10px 14px",
-              borderRadius: "8px",
-            }}
-          />
+          {[
+            { placeholder: "Username", key: "username" },
+            { placeholder: "Email", key: "email", type: "email" },
+            { placeholder: "Mobile Number", key: "mobile", type: "tel" },
+            { placeholder: "Password", key: "password", type: "password" },
+            {
+              placeholder: "Confirm Password",
+              key: "confirmPassword",
+              type: "password",
+            },
+          ].map((field, index) => (
+            <motion.input
+              key={field.key}
+              whileFocus={{ scale: 1.02, borderColor: "#b30000" }}
+              transition={{ duration: 0.2 }}
+              type={field.type || "text"}
+              placeholder={field.placeholder}
+              value={form[field.key]}
+              onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+              required
+              style={{
+                border: "1.5px solid #ff9999",
+                padding: "11px 14px",
+                borderRadius: "8px",
+                outline: "none",
+                fontSize: "14px",
+              }}
+            />
+          ))}
 
           <motion.button
             type="submit"
@@ -212,16 +164,17 @@ const Signup = () => {
               border: "none",
               padding: "12px 0",
               borderRadius: "8px",
-              fontWeight: "600",
+              fontWeight: 600,
               fontSize: "15px",
-              boxShadow: "0 5px 15px rgba(255, 0, 0, 0.3)",
+              boxShadow: "0 5px 15px rgba(255, 0, 0, 0.25)",
+              cursor: "pointer",
             }}
           >
             Sign Up
           </motion.button>
         </form>
 
-        {/* Login Link */}
+        {/* Login link */}
         <div className="text-center mt-3 small-muted">
           Already have an account?{" "}
           <a
@@ -236,7 +189,7 @@ const Signup = () => {
           </a>
         </div>
 
-        {/* Success Popup */}
+        {/* ✅ Success Popup */}
         <AnimatePresence>
           {successMsg && (
             <motion.div
@@ -269,38 +222,66 @@ const Signup = () => {
                   background: "#fff",
                   borderRadius: "18px",
                   border: "2px solid #ffb3b3",
-                  boxShadow: "0 10px 30px rgba(255, 0, 0, 0.3)",
+                  boxShadow: "0 10px 35px rgba(255, 0, 0, 0.3)",
                   padding: "30px 50px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                   textAlign: "center",
                   color: "#b30000",
                 }}
               >
                 <motion.div
                   initial={{ scale: 0 }}
-                  animate={{ scale: 1.2 }}
-                  transition={{ type: "spring", stiffness: 120, damping: 8 }}
+                  animate={{ scale: [0, 1.3, 1] }}
+                  transition={{
+                    duration: 0.6,
+                    type: "spring",
+                    stiffness: 120,
+                    damping: 8,
+                  }}
                   style={{
-                    width: "65px",
-                    height: "65px",
+                    width: "70px",
+                    height: "70px",
                     borderRadius: "50%",
                     background: "#ffcccc",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     boxShadow: "0 0 25px rgba(255,0,0,0.3)",
-                    margin: "0 auto 10px auto",
+                    marginBottom: "10px",
                   }}
                 >
-                  <span style={{ fontSize: "30px" }}>✅</span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    style={{ fontSize: "34px" }}
+                  >
+                    ✅
+                  </motion.span>
                 </motion.div>
-                <p style={{ fontWeight: 600, fontSize: "16px" }}>{successMsg}</p>
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "16px",
+                    color: "#a60000",
+                    marginTop: "5px",
+                  }}
+                >
+                  {successMsg}
+                </motion.p>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* 🔥 Background Animation Keyframes */}
+      {/* Background animation */}
       <style>
         {`
           @keyframes bgMove {
