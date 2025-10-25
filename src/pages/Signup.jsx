@@ -1,250 +1,198 @@
-// src/pages/Signup.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import API from "../api";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 
-const Signup = () => {
-  const [form, setForm] = useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-    email: "",
-    mobile: "",
-  });
-  const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+export default function Signup() {
+  const [form, setForm] = useState({ username: "", password: "", email: "" });
+  const [loading, setLoading] = useState(false);
+  const [popup, setPopup] = useState(null); // { type: "success"|"error", text }
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .signup-bg {
+        background: linear-gradient(135deg, #ffcccc, #ff6666);
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+        animation: fadeInBg 1.2s ease-in-out;
+      }
+
+      @keyframes fadeInBg {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(10px);
+        border: none;
+        border-radius: 18px;
+        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.15);
+        animation: fadeUp 0.6s ease-in-out;
+      }
+
+      @keyframes fadeUp {
+        from { transform: translateY(25px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      .btn-primary {
+        background: linear-gradient(90deg, #ff6b81, #e63946);
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(230,57,70,0.4);
+      }
+
+      .form-control {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        transition: all 0.2s ease;
+      }
+
+      .form-control:focus {
+        border-color: #eb2525ff;
+        box-shadow: 0 0 0 0.2rem rgba(235,37,37,0.25);
+      }
+
+      /* Popup Animation */
+      .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        background: white;
+        color: black;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        padding: 25px 40px;
+        z-index: 1000;
+        text-align: center;
+        animation: popupFadeIn 0.4s ease forwards;
+      }
+
+      @keyframes popupFadeIn {
+        from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+
+      .popup-success {
+        border-top: 6px solid #28a745;
+      }
+
+      .popup-error {
+        border-top: 6px solid #dc3545;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccessMsg("");
-
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match!");
-      return;
-    }
-
+    setPopup(null);
+    setLoading(true);
     try {
-      const res = await API.post("/auth/signup", {
-        username: form.username,
-        password: form.password,
-        email: form.email,
-        mobile: form.mobile,
-      });
-
-      const message = res.data;
-      if (message.includes("already exists")) {
-        setError(message);
-      } else {
-        setSuccessMsg("🎉 Signup Successful! Redirecting to login...");
-        setTimeout(() => {
-          setSuccessMsg("");
-          navigate("/login");
-        }, 3000);
-      }
+      const res = await API.post("/auth/signup", form);
+      setPopup({ type: "success", text: "Signup successful! Redirecting..." });
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       console.error(err);
-      setError("Signup failed. Please try again.");
+      setPopup({
+        type: "error",
+        text: "Signup failed. Please check your input or try again later.",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      className="up-root"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #ffe5e5, #ffcccc)",
-      }}
-    >
-      <motion.div
-        className="up-card"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        style={{
-          width: "420px",
-          padding: "30px 25px",
-          borderRadius: "16px",
-          boxShadow: "0 12px 35px rgba(0,0,0,0.15)",
-          background: "#fff",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <h3 className="up-welcome text-center mb-3"> Create Account</h3>
-        <p className="up-sub text-center mb-4">Sign up to access your dashboard</p>
+    <div className="d-flex justify-content-center align-items-center vh-100 signup-bg">
+      <div className="card shadow-sm" style={{ width: 500 }}>
+        <div className="card-body p-4">
+          <h4 className="mb-3 text-center fw-semibold text-danger">Create Account</h4>
+          <p className="text-center text-muted mb-3">
+            Join our secure banking platform
+          </p>
 
-        {error && (
-          <motion.div
-            className="loan-note"
-            style={{
-              color: "var(--accent)",
-              textAlign: "center",
-              marginBottom: 12,
-              fontWeight: 600,
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {error}
-          </motion.div>
-        )}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label small fw-medium">Username</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter username"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                required
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-          <input
-            className="input"
-            placeholder="Username"
-            value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
-            required
-          />
-          <input
-            className="input"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            required
-          />
-          <input
-            className="input"
-            type="tel"
-            placeholder="Mobile Number"
-            value={form.mobile}
-            onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-            required
-          />
-          <input
-            className="input"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required
-          />
-          <input
-            className="input"
-            type="password"
-            placeholder="Confirm Password"
-            value={form.confirmPassword}
-            onChange={(e) =>
-              setForm({ ...form, confirmPassword: e.target.value })
-            }
-            required
-          />
+            <div className="mb-3">
+              <label className="form-label small fw-medium">Email</label>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Enter email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+              />
+            </div>
 
-          <motion.button
-            type="submit"
-            className="primary mt-2"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Sign Up
-          </motion.button>
-        </form>
+            <div className="mb-3">
+              <label className="form-label small fw-medium">Password</label>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Enter password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required
+              />
+            </div>
 
-        <div className="text-center mt-3 small-muted">
-          Already have an account?{" "}
-          <a href="/login" style={{ color: "var(--accent)", fontWeight: 600 }}>
-            Login
-          </a>
+            <button
+              className="btn btn-primary w-100 mt-2"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Sign Up"}
+            </button>
+
+            <div className="text-center mt-3">
+              <small className="text-muted">
+                Already have an account?{" "}
+                <a
+                  href="/login"
+                  className="text-decoration-none fw-semibold text-danger"
+                >
+                  Login
+                </a>
+              </small>
+            </div>
+          </form>
         </div>
+      </div>
 
-        {/* ✅ Success Popup */}
-     {/* ✅ Success Popup */}
-<AnimatePresence>
-  {successMsg && (
-    <motion.div
-      key="overlay"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background: "rgba(255, 200, 200, 0.4)", // soft red overlay
-        backdropFilter: "blur(5px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 9999,
-      }}
-    >
-      <motion.div
-        key="popup"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.8 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        style={{
-          background: "white",
-          borderRadius: "18px",
-          border: "2px solid #ffb3b3",
-          boxShadow: "0 12px 30px rgba(255, 0, 0, 0.25)",
-          padding: "30px 50px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          color: "#a60000",
-        }}
-      >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1.2 }}
-          transition={{ type: "spring", stiffness: 120, damping: 8 }}
-          style={{
-            width: "65px",
-            height: "65px",
-            borderRadius: "50%",
-            background: "#ffcccc",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            boxShadow: "0 0 25px rgba(255,0,0,0.3)",
-            marginBottom: "10px",
-          }}
+      {popup && (
+        <div
+          className={`popup ${
+            popup.type === "success" ? "popup-success" : "popup-error"
+          }`}
         >
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            style={{ fontSize: "30px" }}
-          >
-            ✅
-          </motion.span>
-        </motion.div>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          style={{
-            fontWeight: 600,
-            fontSize: "16px",
-            color: "#a60000",
-            marginTop: "5px",
-          }}
-        >
-          {successMsg}
-        </motion.p>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
-
-      </motion.div>
+          <h5 className="mb-2">
+            {popup.type === "success" ? "✅ Success!" : "❌ Error!"}
+          </h5>
+          <p className="m-0">{popup.text}</p>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Signup;
+}
