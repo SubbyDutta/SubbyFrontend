@@ -50,68 +50,52 @@ const Signup = () => {
   };
 
   return (
-  <motion.div
-  className="signup-root"
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ duration: 1 }}
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    background: "linear-gradient(135deg, #fff0f0, #ffdcdc)",
-    overflow: "hidden",
-    position: "relative",
-  }}
->
-  {/* Floating bubbles */}
-  <motion.div
-    initial={{ opacity: 0, scale: 0 }}
-    animate={{ opacity: 0.25, scale: 1 }}
-    transition={{ duration: 2, ease: "easeOut" }}
-    style={{
-      position: "absolute",
-      top: "-100px",
-      left: "-100px",
-      width: "400px",
-      height: "400px",
-      borderRadius: "50%",
-      background: "radial-gradient(circle, #ff8a8a 0%, transparent 70%)",
-      zIndex: 0,
-    }}
-  />
-  <motion.div
-    initial={{ opacity: 0, scale: 0 }}
-    animate={{ opacity: 0.25, scale: 1 }}
-    transition={{ duration: 2.5, ease: "easeOut" }}
-    style={{
-      position: "absolute",
-      bottom: "-150px",
-      right: "-150px",
-      width: "400px",
-      height: "400px",
-      borderRadius: "50%",
-      background: "radial-gradient(circle, #ffc0c0 0%, transparent 70%)",
-      zIndex: 0,
-    }}
-  />
-
-  {/* Main card animation */}
-  <motion.div
-    initial={{ y: 100, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ duration: 0.8, ease: "easeOut" }}
-    style={{
-      width: "400px",
-      padding: "40px 30px",
-      borderRadius: "18px",
-      boxShadow: "0 10px 35px rgba(255, 0, 0, 0.25)",
-      background: "white",
-      zIndex: 1,
-      textAlign: "center",
-    }}
-  >
+    <motion.div
+      className="signup-root"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #fff0f0, #ffdcdc)",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      {/* Floating background shapes */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 0.15, scale: 1 }}
+        transition={{ duration: 1.5 }}
+        style={{
+          position: "absolute",
+          top: "-100px",
+          left: "-100px",
+          width: "400px",
+          height: "400px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #ff9999 0%, transparent 70%)",
+          zIndex: 0,
+        }}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 0.12, scale: 1 }}
+        transition={{ duration: 2 }}
+        style={{
+          position: "absolute",
+          bottom: "-120px",
+          right: "-120px",
+          width: "400px",
+          height: "400px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #ffb3b3 0%, transparent 70%)",
+          zIndex: 0,
+        }}
+      />
 
       {/* Card */}
       <motion.div
