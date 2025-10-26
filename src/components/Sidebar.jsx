@@ -1,117 +1,240 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 export default function Sidebar({ user, active, setActive, logout, hasAccount }) {
   const navItems = [
-    { key: "dashboard", label: "Dashboard" },
-    { key: "transfer", label: "Transfer Money" },
-    { key: "addMoney", label: "Add Money" },
-    { key: "tx", label: "Transactions" },
-    { key: "chatbot", label: "AI Chatbot" },
-    { key: "loan", label: "Apply for Loan" },
-    { key: "myloan", label: "My Loans" },
+    { key: "dashboard", label: "Dashboard", icon: "bi-house-door-fill" },
+    { key: "transfer", label: "Transfer Money", icon: "bi-arrow-left-right" },
+    { key: "addMoney", label: "Add Money", icon: "bi-wallet2" },
+    { key: "tx", label: "Transactions", icon: "bi-clock-history" },
+    { key: "chatbot", label: "AI Chatbot", icon: "bi-chat-dots-fill" },
+    { key: "loan", label: "Apply for Loan", icon: "bi-file-earmark-text-fill" },
+    { key: "myloan", label: "My Loans", icon: "bi-credit-card-2-front-fill" },
   ];
 
+  // Animation variants
+  const sidebarVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: { duration: 0.5, staggerChildren: 0.05 }
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: { opacity: 1, x: 0 },
+  };
+
+  const sidebarStyle = {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "calc(100vh - 40px)",
+    padding: "24px",
+    width: 260,
+    background: "linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02)",
+    borderRadius: "0 24px 24px 0",
+    position: "sticky",
+    top: 20,
+    alignSelf: "flex-start",
+    zIndex: 10,
+    
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  };
+
   return (
-    <aside
-      className="up-sidebar"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        height: "100vh",
-        padding: "20px",
-        width: 220,
-        background: "linear-gradient(145deg, #ffffff 0%, #f8f9fb 100%)",
-        boxShadow: "2px 0 15px rgba(0,0,0,0.05)",
-        borderRadius: "0 20px 20px 0",
-      }}
+    <motion.aside
+      className="up-sidebar "
+      style={sidebarStyle}
+      initial="hidden"
+      animate="visible"
+      variants={sidebarVariants}
     >
-      {/* 🧑 User Info */}
-      <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 30 }}>
-        <div
-          className="up-avatar"
+      {/* Decorative gradient border */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+        
+          borderRadius: "24px 0 0 0",
+        }}
+      />
+
+      <div style={{ position: "relative", zIndex: 2 }}>
+        {/* User Info Section */}
+        <motion.div
           style={{
-            width: 48,
-            height: 48,
-            borderRadius: "50%",
-            background: "#e63946",
-            color: "#fff",
             display: "flex",
-            justifyContent: "center",
+            gap: 16,
             alignItems: "center",
-            fontWeight: 700,
-            fontSize: 20,
+            marginBottom: 32,
+            paddingBottom: 24,
+            borderBottom: "1px solid rgba(220,53,69,0.1)",
           }}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
         >
-          {user.username?.charAt(0)?.toUpperCase() || "U"}
-        </div>
-        <div>
-          <div className="up-username" style={{ fontWeight: 700, fontSize: 16 }}>
-            {user.username || "User"}
-          </div>
-          <div className="up-role" style={{ fontSize: 12, color: "#666" }}>
-            {String(user.role || "USER").toUpperCase()}
-          </div>
-        </div>
-      </div>
-
-      {/* 🧭 Navigation */}
-      <div className="up-nav" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {navItems.map((item) => (
-          <button
-            key={item.key}
-            className={`up-btn ${active === item.key ? "active" : ""}`}
-            onClick={() => setActive(item.key)}
-            disabled={!hasAccount}
+          <motion.div
+            className="up-avatar"
             style={{
-              padding: "10px 12px",
-              borderRadius: 10,
-              background: active === item.key ? "#e63946" : "#fff",
-              color: active === item.key ? "#fff" : "#333",
-              fontWeight: 600,
-              border: "none",
-              cursor: hasAccount ? "pointer" : "not-allowed",
-              opacity: hasAccount ? 1 : 0.6,
-              transition: "all 0.2s ease",
+              width: 56,
+              height: 56,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #ff6b81 0%, #e63946 100%)",
+              color: "#fff",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontWeight: 700,
+              fontSize: 22,
+              boxShadow: "0 6px 16px rgba(230,57,70,0.25)",
+              border: "3px solid rgba(255,255,255,0.9)",
             }}
-            onMouseOver={(e) => {
-              if (hasAccount && active !== item.key) e.currentTarget.style.background = "#fddede";
-            }}
-            onMouseOut={(e) => {
-              if (active !== item.key) e.currentTarget.style.background = "#fff";
-            }}
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
-            {item.label}
-          </button>
-        ))}
+            {user.username?.charAt(0)?.toUpperCase() || "U"}
+          </motion.div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div 
+              className="up-username" 
+              style={{ 
+                fontWeight: 700, 
+                fontSize: 17,
+                color: "#212529",
+                marginBottom: 4,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {user.username || "User"}
+            </div>
+            <div 
+              className="up-role" 
+              style={{ 
+                fontSize: 12, 
+                color: "#6c757d",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
+              <i className="bi bi-patch-check-fill me-1 text-danger"></i>
+              {String(user.role || "USER").toUpperCase()}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Navigation Items */}
+        <nav className="up-nav" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {navItems.map((item, index) => (
+            <motion.button
+              key={item.key}
+              className={`up-btn ${active === item.key ? "active" : ""}`}
+              onClick={() => hasAccount && setActive(item.key)}
+              disabled={!hasAccount}
+              style={{
+                padding: "12px 16px",
+                borderRadius: 12,
+                background: active === item.key 
+                  ? "linear-gradient(135deg, #ff6b81 0%, #e63946 100%)" 
+                  : "transparent",
+                color: active === item.key ? "#fff" : "#495057",
+                fontWeight: 600,
+                fontSize: 14,
+                border: "none",
+                cursor: hasAccount ? "pointer" : "not-allowed",
+                opacity: hasAccount ? 1 : 0.5,
+                transition: "all 0.2s ease",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                textAlign: "left",
+                position: "relative",
+              }}
+              variants={itemVariants}
+              whileHover={hasAccount && active !== item.key ? {
+                x: 4,
+                backgroundColor: "rgba(230,57,70,0.08)",
+              } : {}}
+              whileTap={hasAccount ? { scale: 0.98 } : {}}
+              initial="hidden"
+              animate="visible"
+              custom={index}
+            >
+              <i 
+                className={`bi ${item.icon}`} 
+                style={{ 
+                  fontSize: 18,
+                  minWidth: 20,
+                }} 
+              />
+              <span style={{ flex: 1 }}>{item.label}</span>
+              {active === item.key && (
+                <motion.div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 4,
+                    height: "70%",
+                   
+                    borderRadius: "0 4px 4px 0",
+                  }}
+                  initial={{ opacity: 0, scaleY: 0 }}
+                  animate={{ opacity: 1, scaleY: 1 }}
+                  transition={{ duration: 0.2 }}
+                />
+              )}
+            </motion.button>
+          ))}
+        </nav>
       </div>
 
-      {/* 🚪 Logout */}
-      <div className="up-logout" style={{ marginTop: 30 }}>
-        <button
+      {/* Logout Button */}
+      <motion.div 
+        className="up-logout" 
+        style={{ marginTop: "auto", paddingTop: 24 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0, transition: { delay: 0.4 } }}
+      >
+        <motion.button
           className="ghost"
           onClick={logout}
           style={{
             width: "100%",
-            padding: "10px 0",
-            borderRadius: 10,
-            border: "1px solid #e63946",
+            padding: "12px 0",
+            borderRadius: 12,
+            border: "2px solid rgba(230,57,70,0.2)",
+            background: "transparent",
             color: "#e63946",
             fontWeight: 600,
-            transition: "all 0.2s ease",
+            fontSize: 14,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            transition: "all 0.3s ease",
           }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = "#e63946";
-            e.currentTarget.style.color = "#fff";
+          whileHover={{
+            backgroundColor: "#e63946",
+            color: "#fff",
+            borderColor: "#e63946",
           }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = "#fff";
-            e.currentTarget.style.color = "#e63946";
-          }}
+          whileTap={{ scale: 0.96 }}
         >
+          <i className="bi bi-box-arrow-right"></i>
           Logout
-        </button>
-      </div>
-    </aside>
+        </motion.button>
+      </motion.div>
+    </motion.aside>
   );
 }

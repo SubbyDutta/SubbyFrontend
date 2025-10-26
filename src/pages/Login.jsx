@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import API from "../api";
 import { useNavigate } from "react-router-dom";
@@ -7,32 +6,75 @@ import { jwtDecode } from "jwt-decode";
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null); // { type: "success"|"error", text }
+  const [message, setMessage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    
     const style = document.createElement("style");
     style.innerHTML = `
-      .login-bg {
-        background: linear-gradient(135deg, #ffe5e5, #ffb3b3);
-        background-size: cover;
-        background-position: center;
-        background-blend-mode: overlay;
-        animation: fadeInBg 1.5s ease-in-out;
+      body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
       }
 
-      @keyframes fadeInBg {
-        from { opacity: 0; }
-        to { opacity: 1; }
+      .login-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Left Section */
+      .login-left {
+        flex: 1;
+        background: linear-gradient(135deg, #eb2525ff, #ff6b81);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .login-left h1 {
+        font-size: 2.3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .login-left p {
+        font-size: 1rem;
+        opacity: 0.9;
+        max-width: 420px;
+      }
+
+      .login-left img {
+        width: 280px;
+        margin-top: 2rem;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+
+      /* Right Section */
+      .login-right {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #fff;
       }
 
       .card {
+        width: 380px;
         background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(8px);
         border: none;
         border-radius: 16px;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
         animation: fadeUp 0.6s ease-in-out;
       }
 
@@ -48,7 +90,8 @@ export default function Login() {
       }
 
       .btn-primary:hover {
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        filter: brightness(1.05);
       }
 
       .btn-outline-light {
@@ -75,6 +118,31 @@ export default function Login() {
       .alert {
         border-radius: 10px;
         font-size: 0.9rem;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 850px) {
+        .login-container {
+          flex-direction: column;
+        }
+
+        .login-left {
+          height: 40vh;
+          padding: 1rem;
+        }
+
+        .login-left img {
+          width: 200px;
+        }
+
+        .login-right {
+          height: 60vh;
+        }
+
+        .card {
+          width: 90%;
+          margin: 0 auto;
+        }
       }
     `;
     document.head.appendChild(style);
@@ -104,11 +172,25 @@ export default function Login() {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 login-bg">
-      <div className="card shadow-sm" style={{ width: 480 }}>
-        <div className="card-body p-4">
-          <h4 className="mb-3 text-center fw-semibold">Welcome Back</h4>
-          <p className="text-center text-muted mb-3">Sign in to continue</p>
+    <div className="login-container">
+      {/* LEFT SIDE */}
+      <div className="login-left">
+        <h1>Welcome to Subby Bank</h1>
+        <p>
+          Experience smart, secure, and seamless digital banking.  
+          Manage your money, loans, and transactions all in one place.
+        </p>
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/3135/3135789.png"
+          alt="Bank Illustration"
+        />
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="login-right">
+        <div className="card">
+          <h4 className="mb-3 text-center fw-semibold">Sign In</h4>
+          <p className="text-center text-muted mb-3">Access your Subby Bank account</p>
 
           {message && (
             <div
@@ -127,19 +209,19 @@ export default function Login() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Username"
+                placeholder="Enter your username"
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
                 required
-                autoFocus
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label small fw-medium">Password</label>
               <input
                 type="password"
                 className="form-control"
-                placeholder="Password"
+                placeholder="Enter your password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
@@ -165,8 +247,14 @@ export default function Login() {
               Don't have an account?{" "}
               <a href="/" className="text-decoration-none fw-semibold text-danger">
                 Sign Up
+              </a>{" "}
+              |{" "}
+              <a
+                href="/forgot-password"
+                className="text-decoration-none fw-semibold text-black"
+              >
+                Forgot Password?
               </a>
-              <a href="/forgot-password" className="text-decoration-none fw-semibold text-black"> , Forgot Password?</a>
             </small>
           </div>
         </div>

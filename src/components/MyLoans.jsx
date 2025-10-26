@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import API from "../api";
 import { motion } from "framer-motion";
@@ -9,6 +8,7 @@ const LoanRepaymentPanel = () => {
   const [selectedLoanId, setSelectedLoanId] = useState("");
   const [repaymentAmount, setRepaymentAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -29,23 +29,30 @@ const LoanRepaymentPanel = () => {
 
   const handleRepayment = async () => {
     if (!selectedLoanId || !repaymentAmount) {
-      setMessage("Please select a loan and enter an amount.");
+      setMessage({ type: "error", text: "Please select a loan and enter an amount." });
       return;
     }
+    setLoading(true);
+    setMessage(null);
     try {
       const res = await API.post(
         `/repay/repay/${selectedLoanId}`,
         { amount: repaymentAmount },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessage(`✅ Repayment successful. Remaining balance: ₹${res.data.remainingBalance}`);
+      setMessage({ 
+        type: "success", 
+        text: `✅ Repayment successful. Remaining balance: ₹${res.data.remainingBalance}` 
+      });
       setRepaymentAmount("");
       setSelectedLoanId("");
       const updatedRepayments = await API.get("/repay/repayments", { headers: { Authorization: `Bearer ${token}` } });
       setRepayments(updatedRepayments.data);
     } catch (err) {
       const msg = err?.response?.data?.error || "❌ Repayment failed. Please try again.";
-      setMessage(msg);
+      setMessage({ type: "error", text: msg });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,8 +63,8 @@ const LoanRepaymentPanel = () => {
   };
 
   const formVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (i) => ({ opacity: 1, x: 0, transition: { delay: i * 0.1, duration: 0.3 } }),
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.4 } },
   };
 
   const buttonVariants = {
@@ -66,63 +73,111 @@ const LoanRepaymentPanel = () => {
   };
 
   const rowVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.05 } }),
+    hidden: { opacity: 0, x: -10 },
+    visible: (i) => ({ 
+      opacity: 1, 
+      x: 0, 
+      transition: { delay: i * 0.05, duration: 0.3 } 
+    }),
+  };
+
+  const panelStyle = {
+    width: 800,
+    borderRadius: 24,
+    background: "linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)",
+    position: "relative",
+    overflow: "hidden",
+     top:-30,
+    boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
   };
 
   return (
     <motion.div
-      style={{
-      
-        backgroundPosition: "center",
-        width: 800,
-        padding: "30px 0",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
+      className="card border-0 shadow-lg p-4 p-md-5"
+      style={panelStyle}
       initial="hidden"
       animate="visible"
       variants={panelVariants}
     >
+      {/* Decorative gradient border */}
       <div
-        className="panel card shadow-lg"
         style={{
-          width: "85%",
-          maxWidth: 900,
-          borderRadius: 20,
-          background: "rgba(255,255,255,0.9)",
-          backdropFilter: "blur(8px)",
-          padding: 40,
-          boxShadow: "0 12px 35px rgba(0,0,0,0.2)",
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 4,
+        
+          opacity: 0.8,
         }}
-      >
-        <h5 className="text-danger" style={{ fontWeight: 800, marginBottom: 30, textAlign: "center" }}>
-          Loan Repayment
-        </h5>
+      />
+
+      <div style={{ position: "relative", zIndex: 2 }}>
+        {/* Header */}
+        <div className="mb-4 text-center">
+          <div className="d-inline-block mb-3">
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 16,
+                background: "linear-gradient(135deg, #ff6b81 0%, #e63946 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontSize: 28,
+                margin: "0 auto",
+                boxShadow: "0 8px 20px rgba(230,57,70,0.3)",
+              }}
+            >
+              <i className="bi bi-credit-card-2-front-fill"></i>
+            </div>
+          </div>
+          <h4
+            className="fw-bold mb-2"
+            style={{
+              background: "linear-gradient(135deg, #ff6b81 0%, #e63946 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            Loan Repayment
+          </h4>
+          <p className="text-muted small mb-0">
+            <i className="bi bi-info-circle me-1"></i>
+            Manage and track your loan repayments
+          </p>
+        </div>
 
         {/* Repayment Form */}
         <motion.div
+          className="card border-0 mb-4 p-4"
           style={{
-            padding: 24,
-            borderRadius: 16,
+            borderRadius: 20,
             background: "#ffffff",
-            boxShadow: "0 6px 25px rgba(0,0,0,0.08)",
-            marginBottom: 40,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+            border: "1px solid rgba(220,53,69,0.1)",
           }}
-          initial="hidden"
-          animate="visible"
           variants={formVariants}
-          custom={0}
         >
-          <h4 style={{ fontWeight: 700, color: "#444", marginBottom: 16 }}>Make a Repayment</h4>
+          <div className="d-flex align-items-center mb-3">
+            <i className="bi bi-wallet2 me-2 text-danger" style={{ fontSize: 20 }}></i>
+            <h5 className="fw-bold mb-0">Make a Repayment</h5>
+          </div>
 
           <motion.select
             value={selectedLoanId}
             onChange={(e) => setSelectedLoanId(e.target.value)}
-            style={selectStyle}
-            initial={{ opacity: 0, x: -20 }}
+            className="form-select mb-3"
+            style={{
+              borderColor: "rgba(220,53,69,0.3)",
+              borderRadius: 12,
+              padding: "12px 16px",
+              fontSize: "1rem",
+            }}
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
@@ -139,83 +194,190 @@ const LoanRepaymentPanel = () => {
             value={repaymentAmount}
             onChange={(e) => setRepaymentAmount(e.target.value)}
             placeholder="Enter repayment amount"
-            style={inputStyle}
-            initial={{ opacity: 0, x: -20 }}
+            className="form-control mb-3"
+            style={{
+              borderColor: "rgba(220,53,69,0.3)",
+              borderRadius: 12,
+              padding: "12px 16px",
+              fontSize: "1rem",
+            }}
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.3 }}
           />
 
           <motion.button
             onClick={handleRepayment}
-            style={primaryButtonStyle}
+            className="btn btn-danger w-100"
+            style={{
+              fontWeight: 600,
+              borderRadius: 12,
+              padding: "14px",
+              fontSize: "1rem",
+            }}
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
+            disabled={loading}
           >
-            Repay Now
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2"></span>
+                Processing...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-arrow-down-circle-fill me-2"></i>
+                Repay Now
+              </>
+            )}
           </motion.button>
 
           {message && (
             <motion.div
+              className="mt-3 alert d-flex align-items-center gap-2"
               style={{
-                marginTop: 16,
-                padding: 12,
-                borderRadius: 10,
-                background: message.includes("✅") ? "#e8f9ee" : "rgba(255, 230, 230, 0.9)",
-                color: message.includes("✅") ? "#1e7a3d" : "#b91c1c",
+                borderRadius: 12,
+                border: "none",
+                background: message.type === "success" 
+                  ? "rgba(16,185,129,0.1)" 
+                  : "rgba(239,68,68,0.1)",
+                color: message.type === "success" ? "#10b981" : "#ef4444",
                 fontWeight: 600,
-                textAlign: "center",
               }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
             >
-              {message}
+              <i className={`bi ${message.type === "success" ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill"}`} style={{ fontSize: 20 }}></i>
+              <span>{message.text}</span>
             </motion.div>
           )}
         </motion.div>
 
         {/* Repayment History Table */}
         <motion.div
+          className="card border-0 p-4"
           style={{
-            padding: 24,
-            borderRadius: 16,
+            borderRadius: 20,
             background: "#ffffff",
-            boxShadow: "0 6px 25px rgba(0,0,0,0.08)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+            border: "1px solid rgba(220,53,69,0.1)",
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.3 }}
         >
-          <h4 style={{ fontWeight: 700, color: "#444", marginBottom: 16 }}>Repayment History</h4>
+          <div className="d-flex align-items-center mb-3">
+            <i className="bi bi-clock-history me-2 text-danger" style={{ fontSize: 20 }}></i>
+            <h5 className="fw-bold mb-0">Repayment History</h5>
+          </div>
 
           {repayments.length === 0 ? (
-            <p style={{ color: "#777" }}>No repayments found.</p>
+            <div className="text-center py-4">
+              <div
+                style={{
+                  width: 64,
+                  height: 64,
+                  margin: "0 auto 1rem",
+                  borderRadius: "50%",
+                  background: "rgba(220,53,69,0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 32,
+                  color: "#e63946",
+                }}
+              >
+                <i className="bi bi-inbox"></i>
+              </div>
+              <p className="text-muted mb-0">No repayments found.</p>
+            </div>
           ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
-                <thead style={{ background: "#f3f3f3", color: "#222", textTransform: "uppercase", fontSize: 13 }}>
-                  <tr>
-                    <th style={thStyle}>Loan ID</th>
-                    <th style={thStyle}>Amount Paid</th>
-                    <th style={thStyle}>Remaining Balance</th>
-                    <th style={thStyle}>Payment Date</th>
+            <div style={{ 
+              overflowX: "auto", 
+              borderRadius: 16,
+              border: "1px solid rgba(220,53,69,0.1)",
+              maxHeight: 450,
+              overflowY: "auto",
+            }} className="services-container">
+              <table className="table mb-0">
+                <thead>
+                  <tr style={{
+                    background: "linear-gradient(135deg, #ff6b81 0%, #e63946 100%)",
+                    color: "#fff",
+                  }}>
+                    <th style={{ 
+                      padding: "14px 16px", 
+                      fontWeight: 600, 
+                      fontSize: "0.85rem",
+                      borderBottom: "none",
+                    }}>
+                      <i className="bi bi-hash me-1"></i>Loan ID
+                    </th>
+                    <th style={{ 
+                      padding: "14px 16px", 
+                      fontWeight: 600, 
+                      fontSize: "0.85rem",
+                      borderBottom: "none",
+                    }}>
+                      <i className="bi bi-currency-rupee me-1"></i>Amount Paid
+                    </th>
+                    <th style={{ 
+                      padding: "14px 16px", 
+                      fontWeight: 600, 
+                      fontSize: "0.85rem",
+                      borderBottom: "none",
+                    }}>
+                      <i className="bi bi-wallet2 me-1"></i>Remaining
+                    </th>
+                    <th style={{ 
+                      padding: "14px 16px", 
+                      fontWeight: 600, 
+                      fontSize: "0.85rem",
+                      borderBottom: "none",
+                    }}>
+                      <i className="bi bi-calendar3 me-1"></i>Payment Date
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {repayments.map((r, i) => (
                     <motion.tr
                       key={r.id}
-                      style={{ background: i % 2 === 0 ? "#fff" : "#fafafa" }}
-                      whileHover={{ backgroundColor: "#e8f0fe", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+                      style={{
+                        background: i % 2 === 0 ? "#fff" : "#f8f9fa",
+                        borderBottom: "1px solid rgba(0,0,0,0.05)",
+                      }}
+                      whileHover={{
+                        background: "rgba(255,107,129,0.08)",
+                        cursor: "pointer",
+                      }}
                       initial="hidden"
                       animate="visible"
                       variants={rowVariants}
                       custom={i}
                     >
-                      <td style={tdStyle}>{r.loanId}</td>
-                      <td style={{ ...tdStyle, color: "#d62828", fontWeight: 600 }}>₹{r.amountPaid}</td>
-                      <td style={{ ...tdStyle, color: "#2d6a4f", fontWeight: 600 }}>₹{r.remainingBalance}</td>
-                      <td style={{ ...tdStyle, color: "#333" }}>{new Date(r.paymentDate).toLocaleString()}</td>
+                      <td style={{ padding: "14px 16px", fontSize: "0.9rem" }}>
+                        <span className="badge bg-secondary" style={{ fontSize: "0.8rem" }}>
+                          #{r.loanId}
+                        </span>
+                      </td>
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#ef4444" }}>
+                        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                          <i className="bi bi-arrow-down-circle-fill text-danger"></i>
+                          ₹{r.amountPaid}
+                        </span>
+                      </td>
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#10b981" }}>
+                        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                          <i className="bi bi-wallet2 text-success"></i>
+                          ₹{r.remainingBalance}
+                        </span>
+                      </td>
+                      <td style={{ padding: "14px 16px", fontSize: "0.9rem", color: "#6c757d" }}>
+                        <i className="bi bi-calendar3 me-1"></i>
+                        {new Date(r.paymentDate).toLocaleString()}
+                      </td>
                     </motion.tr>
                   ))}
                 </tbody>
@@ -227,45 +389,5 @@ const LoanRepaymentPanel = () => {
     </motion.div>
   );
 };
-
-// Styles
-const inputStyle = {
-  width: "100%",
-  padding: "12px 14px",
-  borderRadius: 12,
-  border: "1px solid #ccc",
-  marginTop: 12,
-  fontSize: 14,
-  outline: "none",
-};
-
-const selectStyle = {
-  width: "100%",
-  padding: "12px 14px",
-  borderRadius: 12,
-  border: "1px solid #ccc",
-  fontSize: 14,
-  outline: "none",
-  marginTop: 12,
-};
-
-const primaryButtonStyle = {
-  marginTop: 16,
-  width: "100%",
-  padding: "12px 0",
-  borderRadius: 16,
-  border: "none",
-  background: "linear-gradient(90deg, #ff6b81, #e63946)",
-  color: "#fff",
-  fontWeight: 700,
-  fontSize: 15,
-  letterSpacing: 0.3,
-  cursor: "pointer",
-  transition: "transform 0.2s, box-shadow 0.2s",
-  boxShadow: "0 4px 10px rgba(230, 57, 70, 0.3)",
-};
-
-const thStyle = { padding: "12px 10px", textAlign: "left", fontWeight: 700 };
-const tdStyle = { padding: "12px 10px", borderBottom: "1px solid #eee" };
 
 export default LoanRepaymentPanel;
