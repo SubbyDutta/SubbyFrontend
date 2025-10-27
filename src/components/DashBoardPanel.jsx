@@ -88,7 +88,7 @@ export default function DashboardPanel({ active, setActive, onAddMoneySuccess })
   };
 
   const panelStyle = {
-   width: 900,
+   width: 800,
     borderRadius: 24,
     top:-30,
     right:-30,
