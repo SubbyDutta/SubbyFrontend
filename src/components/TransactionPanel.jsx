@@ -22,13 +22,14 @@ export default function TransactionsPanel({ transactions, loading, onReload }) {
   };
 
   const panelStyle = {
-    width: 800,
+    width: 830,
     
     borderRadius: 24,
     background: "linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)",
     position: "relative",
     overflow: "hidden",
      top:-30,
+     right:-20,
     boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
   };
 
@@ -96,7 +97,7 @@ export default function TransactionsPanel({ transactions, loading, onReload }) {
             className="btn btn-danger px-4"
             onClick={onReload}
             style={{
-              fontWeight: 600,
+              fontWeight: 700,
               borderRadius: 12,
               fontSize: "0.95rem",
             }}
@@ -117,7 +118,7 @@ export default function TransactionsPanel({ transactions, loading, onReload }) {
         ) : transactions && transactions.length ? (
           <div
             style={{
-              maxHeight: 500,
+              maxHeight: 600,
               overflowY: "auto",
               borderRadius: 16,
               background: "#ffffff",
@@ -177,12 +178,8 @@ export default function TransactionsPanel({ transactions, loading, onReload }) {
                       borderBottom: "1px solid rgba(0,0,0,0.05)",
                       cursor: "pointer",
                     }}
-                    whileHover={{
-                      background: "rgba(255,107,129,0.08)",
-                      transform: "scale(1.005)",
-                    }}
-                    initial="hidden"
-                    animate="visible"
+                  
+
                     variants={rowVariants}
                     custom={i}
                   >
